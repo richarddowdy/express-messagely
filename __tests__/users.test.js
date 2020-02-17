@@ -56,7 +56,7 @@ describe("Test User class", async function () {
       last_name: "Testy",
       phone: "+14155550000",
       last_login_at: expect.any(Date),
-      join_at: expect.any(Date),
+      join_at: expect.any(Date)
     });
   });
 
@@ -66,6 +66,7 @@ describe("Test User class", async function () {
       username: "test",
       first_name: "Test",
       last_name: "Testy",
+      phone: "+14155550000"
     }]);
   });
 });
