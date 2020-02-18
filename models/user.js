@@ -13,7 +13,7 @@ class User {
    *    {username, password, first_name, last_name, phone}
    */
 
-  static async register({username, password, first_name, last_name, phone}) { 
+  static async register({ username, password, first_name, last_name, phone }) {
 
     // hash password
     const hashed_password = await bcrypt.hash(password, BCRYPT_WORK_FACTOR)
@@ -30,50 +30,43 @@ class User {
       VALUES (
         $1, $2, $3, $4, $5, current_timestamp, current_timestamp)
       RETURNING username, password, first_name, last_name, phone`,
-        [username, hashed_password, first_name, last_name, phone]
+      [username, hashed_password, first_name, last_name, phone]
     )
     return result.rows[0];
   }
 
   /** Authenticate: is this username/password valid? Returns boolean. */
 
-  static async authenticate(username, password) { 
-    try{
-      const result = await db.query(
-        `SELECT password
+  static async authenticate(username, password) {
+
+    const result = await db.query(
+      `SELECT password
          FROM users
          WHERE username = $1`,
-         [username]
-      )
-      const user = result.rows[0]
+      [username]
+    )
+    const user = result.rows[0]
 
-      if (user) {
-        return await bcrypt.compare(password, user.password)
-      }
-      throw new ExpressError("Invalid username or password.", 400)
-    } catch (err) {
-      return next(err);
-    }
+    return user && await bcrypt.compare(password, user.password);
+
   }
 
   /** Update last_login_at for user */
 
   static async updateLoginTimestamp(username) {
-    try{
-      const result = await db.query(
-        `UPDATE users
+
+    const result = await db.query(
+      `UPDATE users
          SET last_login_at = current_timestamp
          WHERE username = $1
          RETURNING username`,
-         [username]);
-      
-      const user = result.rows[0]
-      if(!user){
-        throw new ExpressError("User not found", 400);
-      };
-    } catch (err){
-      return next(err);
-    }
+      [username]);
+
+    const user = result.rows[0]
+    if (!user) {
+      throw new ExpressError("User not found", 400);
+    };
+
   }
 
   /** All: basic info on all users:
@@ -98,20 +91,18 @@ class User {
    *          last_login_at } */
 
   static async get(username) {
-    try {
-      const result = await db.query(
-        `SELECT username, first_name, last_name, phone, join_at, last_login_at
+
+    const result = await db.query(
+      `SELECT username, first_name, last_name, phone, join_at, last_login_at
          FROM users
          WHERE username =$1`,
-         [username]
-      )
-      if(result.rows.length === 0) {
-        throw new ExpressError("User not found", 400);
-      }
-      return result.rows[0];
-    } catch(err) {
-      return next(err)
+      [username]
+    )
+    if (result.rows.length === 0) {
+      throw new ExpressError("User not found", 400);
     }
+    return result.rows[0];
+
   }
 
   /** Return messages from this user.
@@ -122,7 +113,7 @@ class User {
    *   {username, first_name, last_name, phone}
    */
 
-  static async messagesFrom(username) { 
+  static async messagesFrom(username) {
     const result = await db.query(
       `SELECT m.id, 
               m.to_username, 
@@ -136,10 +127,10 @@ class User {
         FROM messages AS m
         JOIN users AS u ON m.to_username = u.username
         WHERE from_username = $1`,
-        [username]
+      [username]
     )
     let messages = result.rows;
-    if(!messages) {
+    if (!messages) {
       throw new ExpressError("User not found", 400);
     }
     messages = messages.map(m => {
@@ -167,7 +158,7 @@ class User {
    *   {id, first_name, last_name, phone}
    */
 
-  static async messagesTo(username) { 
+  static async messagesTo(username) {
     const result = await db.query(
       `SELECT m.id, 
               m.from_username, 
@@ -181,10 +172,10 @@ class User {
         FROM messages AS m
         JOIN users AS u ON m.from_username = u.username
         WHERE to_username = $1`,
-        [username]
+      [username]
     )
     let messages = result.rows;
-    if(!messages) {
+    if (!messages) {
       throw new ExpressError("User not found", 400);
     }
     messages = messages.map(m => {
