@@ -1,7 +1,6 @@
 const express = require('express');
 
-const ExpressError = require("../expressError");
-
+const middleware = require("../middleware/auth")
 const User = require("../models/user")
 
 const router = express.Router();
@@ -29,6 +28,8 @@ router.get('/', async function(req, res, next) {
  **/
 router.get('/:username', async function(req, res, next) {
   try {
+    middleware.ensureCorrectUser
+
     let result = await User.get(req.params.username);
     
     return res.json({ "user": result });
@@ -49,6 +50,8 @@ router.get('/:username', async function(req, res, next) {
  **/
 router.get('/:username/to', async function(req, res, next) {
   try {
+    middleware.ensureCorrectUser
+
     let results = await User.messagesTo(req.params.username);
 
     return res.json({ "messages": results });
@@ -69,6 +72,8 @@ router.get('/:username/to', async function(req, res, next) {
  **/
 router.get('/:username/from', async function(req, res, next) {
   try {
+    middleware.ensureCorrectUser
+
     let results = await User.messagesFrom(req.params.username);
 
     return res.json({ "messages": results });

@@ -93,7 +93,7 @@ class Message {
       },
       body: m.body,
       sent_at: m.sent_at,
-      read_at: m.read_at,
+      read_at: m.read_at
     };
   }
 }
