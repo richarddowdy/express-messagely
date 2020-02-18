@@ -26,9 +26,9 @@ router.get('/', async function(req, res, next) {
  * => {user: {username, first_name, last_name, phone, join_at, last_login_at}}
  *
  **/
-router.get('/:username', async function(req, res, next) {
+router.get('/:username', middleware.ensureCorrectUser, async function(req, res, next) {
   try {
-    middleware.ensureCorrectUser
+    
 
     let result = await User.get(req.params.username);
     
@@ -48,9 +48,9 @@ router.get('/:username', async function(req, res, next) {
  *                 from_user: {username, first_name, last_name, phone}}, ...]}
  *
  **/
-router.get('/:username/to', async function(req, res, next) {
+router.get('/:username/to', middleware.ensureCorrectUser, async function(req, res, next) {
   try {
-    middleware.ensureCorrectUser
+   
 
     let results = await User.messagesTo(req.params.username);
 
@@ -70,7 +70,7 @@ router.get('/:username/to', async function(req, res, next) {
  *                 to_user: {username, first_name, last_name, phone}}, ...]}
  *
  **/
-router.get('/:username/from', async function(req, res, next) {
+router.get('/:username/from', middleware.ensureCorrectUser, async function(req, res, next) {
   try {
     middleware.ensureCorrectUser
 
