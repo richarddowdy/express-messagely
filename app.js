@@ -3,7 +3,7 @@
 
 const express = require("express");
 const cors = require("cors");
-const { authenticateJWT } = require("./middleware/auth");
+const { authenticateJWT, ensureLoggedIn } = require("./middleware/auth");
 
 const ExpressError = require("./expressError")
 const app = express();
@@ -25,8 +25,8 @@ const userRoutes = require("./routes/users");
 const messageRoutes = require("./routes/messages");
 
 app.use("/auth", authRoutes);
-// app.use("/users", userRoutes);
-// app.use("/messages", messageRoutes);
+app.use("/users", ensureLoggedIn, userRoutes);
+// app.use("/messages", ensureLoggedIn, messageRoutes);
 
 /** 404 handler */
 
